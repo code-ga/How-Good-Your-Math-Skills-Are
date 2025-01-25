@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How Good Your Math Skills Are</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #d8d8d8;
+        text-align: center;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      .calculator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .firstNumber,
+      .secondNumber,
+      .result {
+        margin: 0 5px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .operator,
+      .equals {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+      .scores {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      .scores h2 {
+        margin: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Show off your math skills</h1>
+      <div class="scores">
+        <h2>Score: <span id="score">0</span></h2>
+        <h2>Time: <span id="time">0</span></h2>
+      </div>
+      <div class="calculator">
+        <input class="firstNumber" type="number" />
+        <div class="operator"></div>
+        <input class="secondNumber" type="number" />
+        <div class="equals">=</div>
+        <input class="result" type="number" />
+      </div>
+    </div>
+  </body>
+  <script>
+    const operators = ["+", "-", "*"];
+    function getState() {
+      const firstNumber = Math.floor(Math.random() * 100);
+      const secondNumber = Math.floor(Math.random() * 100);
+      const operatorIndex = Math.floor(Math.random() * operators.length);
+      const operator = operators[operatorIndex];
+      const result = eval(`${firstNumber} ${operator} ${secondNumber}`);
+      return {
+        firstNumber,
+        secondNumber,
+        operator,
+        result,
+        byInput: [firstNumber, secondNumber, result],
+      };
+    }
+    let score = 0;
+    let state = getState();
+    let startTime = new Date();
+    const render = () => {
+      const hiddenInput = Math.floor(Math.random() * 2);
+      const inputs = document.querySelectorAll("input");
+      const operators = document.querySelectorAll(".operator");
+      const scoreElement = document.querySelector("#score");
+      const timeElement = document.querySelector("#time");
+      scoreElement.textContent = score;
+      timeElement.textContent = Math.floor((new Date() - startTime) / 1000);
+      operators[0].textContent = state.operator;
+      let index = 0;
+      for (const val of state.byInput) {
+        const currentInput = inputs[index];
+        console.log(currentInput);
+        if (index != hiddenInput) {
+          currentInput.value = val;
+          currentInput.readOnly = true;
+        } else {
+          currentInput.readOnly = false;
+          currentInput.focus();
+          currentInput.value = "";
+          // if press enter, check answer
+          currentInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              const result = Number(currentInput.value);
+              console.log(result, val);
+              if (result == val) {
+                score++;
+                state = getState();
+                render();
+              }
+            }
+          });
+        }
+        index++;
+      }
+    };
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</html>
